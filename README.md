@@ -129,12 +129,12 @@ calculator/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/cekwedike/advanced-calculator.git
+git clone https://github.com/cekwedike/calculator.git
 ```
 
 2. Open the project directory:
 ```bash
-cd advanced-calculator
+cd calculator
 ```
 
 3. Open `index.html` in your web browser
