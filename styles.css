@@ -101,6 +101,8 @@ button {
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
 }
 
 button:hover {
@@ -109,6 +111,28 @@ button:hover {
 
 button:active {
     transform: scale(0.95);
+}
+
+button:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+button:active:after {
+    width: 200%;
+    height: 200%;
+    opacity: 0;
+    transition: 0s;
+    transform: scale(0, 0) translate(-50%);
 }
 
 .operator {
@@ -329,14 +353,23 @@ body.dark-mode .calculator {
 }
 
 body.dark-mode .display-container {
-    background-color: #1a1a1a;
+    background-color: #2d2d2d;
     color: #ffffff;
+}
+
+body.dark-mode .history-display {
+    background-color: #1a1a1a;
+    color: #9e9e9e;
 }
 
 body.dark-mode .display {
-    color: #ffffff;
+    background-color: #1a1a1a;
+    color: #00ff00;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 0 2px rgba(0, 255, 0, 0.5);
 }
 
+/* Dark mode button styles */
 body.dark-mode button {
     background-color: #3d3d3d;
     color: #ffffff;
@@ -347,14 +380,87 @@ body.dark-mode button:hover {
     background-color: #4d4d4d;
 }
 
+body.dark-mode button:active {
+    background-color: #5d5d5d;
+    transform: scale(0.95);
+}
+
+/* Dark mode specific button colors */
+body.dark-mode .operator {
+    background-color: #ff9800;
+    color: #ffffff;
+}
+
+body.dark-mode .operator:hover {
+    background-color: #ffa726;
+}
+
+body.dark-mode .clear {
+    background-color: #f44336;
+    color: #ffffff;
+}
+
+body.dark-mode .clear:hover {
+    background-color: #ef5350;
+}
+
+body.dark-mode .equals {
+    background-color: #4caf50;
+    color: #ffffff;
+}
+
+body.dark-mode .equals:hover {
+    background-color: #66bb6a;
+}
+
+body.dark-mode .scientific {
+    background-color: #2196f3;
+    color: #ffffff;
+}
+
+body.dark-mode .scientific:hover {
+    background-color: #42a5f5;
+}
+
+body.dark-mode .programmer {
+    background-color: #9c27b0;
+    color: #ffffff;
+}
+
+body.dark-mode .programmer:hover {
+    background-color: #ab47bc;
+}
+
+body.dark-mode .statistics {
+    background-color: #ff5722;
+    color: #ffffff;
+}
+
+body.dark-mode .statistics:hover {
+    background-color: #ff7043;
+}
+
+body.dark-mode .decimal {
+    background-color: #9e9e9e;
+    color: #ffffff;
+}
+
+body.dark-mode .decimal:hover {
+    background-color: #bdbdbd;
+}
+
 body.dark-mode .mode-btn.active {
-    background-color: #4d4d4d;
+    background-color: #2196f3;
     color: #ffffff;
 }
 
 body.dark-mode .settings-btn {
     background-color: #3d3d3d;
     color: #ffffff;
+}
+
+body.dark-mode .settings-btn:hover {
+    background-color: #4d4d4d;
 }
 
 body.dark-mode .history-panel,
@@ -366,4 +472,9 @@ body.dark-mode .memory-panel {
 body.dark-mode .history-item,
 body.dark-mode .memory-item {
     border-bottom: 1px solid #4d4d4d;
+}
+
+body.dark-mode .history-item:hover,
+body.dark-mode .memory-item:hover {
+    background-color: #3d3d3d;
 } 
