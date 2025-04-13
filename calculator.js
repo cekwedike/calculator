@@ -12,12 +12,32 @@ class Calculator {
         this.currentMode = 'standard';
         this.numberBase = 'DEC';
         this.statisticsData = [];
+        this.MAX_INPUT_LENGTH = 15;
+        this.MAX_MEMORY_SLOTS = 10;
+        this.focusedButton = null;
+        this.keyboardMap = new Map([
+            ['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'],
+            ['5', '5'], ['6', '6'], ['7', '7'], ['8', '8'], ['9', '9'],
+            ['.', '.'], ['+', '+'], ['-', '-'], ['*', '×'], ['/', '÷'],
+            ['Enter', '='], ['Escape', 'C'], ['Backspace', 'C'],
+            ['s', 'sin'], ['c', 'cos'], ['t', 'tan'], ['l', 'log'],
+            ['n', 'ln'], ['r', '√'], ['p', 'π'], ['e', 'e'],
+            ['!', 'n!'], ['|', '|x|'], ['^', 'x^y'], ['2', 'x²'],
+            ['h', 'HEX'], ['d', 'DEC'], ['o', 'OCT'], ['b', 'BIN'],
+            ['a', 'AND'], ['o', 'OR'], ['x', 'XOR'], ['n', 'NOT'],
+            ['m', 'MEAN'], ['v', 'VAR'], ['s', 'STD'], ['u', 'SUM']
+        ]);
         
-        this.initializeEventListeners();
-        this.updateModeDisplay();
+        this.initialize();
     }
 
-    initializeEventListeners() {
+    initialize() {
+        this.modeDisplay = document.querySelector('.mode-display');
+        this.historyPanel = document.querySelector('.history-panel');
+        this.memoryPanel = document.querySelector('.memory-panel');
+        this.historyContent = document.querySelector('.history-content');
+        this.memoryContent = document.querySelector('.memory-content');
+
         // Number and operator buttons
         document.querySelectorAll('.number').forEach(button => {
             button.addEventListener('click', () => this.handleNumber(button.textContent));
@@ -65,8 +85,28 @@ class Calculator {
         document.querySelector('.clear').addEventListener('click', () => this.clear());
         document.querySelector('.decimal').addEventListener('click', () => this.handleDecimal());
 
-        // Keyboard support
+        // Add keyboard event listener
         document.addEventListener('keydown', (e) => this.handleKeyboardInput(e));
+
+        // Add focus management
+        document.addEventListener('focusin', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                this.focusedButton = e.target;
+            }
+        });
+
+        // Add focus styles
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                const buttons = document.querySelectorAll('button');
+                const currentIndex = Array.from(buttons).indexOf(this.focusedButton);
+                const nextIndex = e.shiftKey ? currentIndex - 1 : currentIndex + 1;
+                
+                if (nextIndex >= 0 && nextIndex < buttons.length) {
+                    buttons[nextIndex].focus();
+                }
+            }
+        });
     }
 
     setMode(mode) {
@@ -95,73 +135,61 @@ class Calculator {
     }
 
     handleScientific(func) {
-        const value = parseFloat(this.currentValue);
-        let result;
+        this.safeOperation(() => {
+            const value = parseFloat(this.currentValue);
+            let result;
 
-        switch (func) {
-            case 'sin':
-                result = this.isRadians ? Math.sin(value) : Math.sin(value * Math.PI / 180);
-                break;
-            case 'cos':
-                result = this.isRadians ? Math.cos(value) : Math.cos(value * Math.PI / 180);
-                break;
-            case 'tan':
-                result = this.isRadians ? Math.tan(value) : Math.tan(value * Math.PI / 180);
-                break;
-            case 'sin⁻¹':
-                result = this.isRadians ? Math.asin(value) : Math.asin(value) * 180 / Math.PI;
-                break;
-            case 'cos⁻¹':
-                result = this.isRadians ? Math.acos(value) : Math.acos(value) * 180 / Math.PI;
-                break;
-            case 'tan⁻¹':
-                result = this.isRadians ? Math.atan(value) : Math.atan(value) * 180 / Math.PI;
-                break;
-            case 'log':
-                result = Math.log10(value);
-                break;
-            case 'ln':
-                result = Math.log(value);
-                break;
-            case '√':
-                result = Math.sqrt(value);
-                break;
-            case 'x²':
-                result = Math.pow(value, 2);
-                break;
-            case 'x^y':
-                this.operation = '^';
-                this.previousValue = this.currentValue;
-                this.shouldResetDisplay = true;
-                return;
-            case 'π':
-                result = Math.PI;
-                break;
-            case 'e':
-                result = Math.E;
-                break;
-            case 'n!':
-                result = this.factorial(value);
-                break;
-            case '1/x':
-                result = 1 / value;
-                break;
-            case '|x|':
-                result = Math.abs(value);
-                break;
-            case 'e^x':
-                result = Math.exp(value);
-                break;
-            case '10^x':
-                result = Math.pow(10, value);
-                break;
-            default:
-                return;
-        }
+            switch (func) {
+                case 'sin':
+                case 'cos':
+                case 'tan':
+                    result = this.isRadians ? Math[func](value) : Math[func](value * Math.PI / 180);
+                    break;
+                case 'sin⁻¹':
+                case 'cos⁻¹':
+                case 'tan⁻¹':
+                    if (value < -1 || value > 1) throw new Error('Invalid input for inverse trig');
+                    const inverseFunc = func.replace('⁻¹', '');
+                    result = this.isRadians ? Math[`a${inverseFunc}`](value) : Math[`a${inverseFunc}`](value) * 180 / Math.PI;
+                    break;
+                case 'log':
+                    if (value <= 0) throw new Error('Invalid input for logarithm');
+                    result = Math.log10(value);
+                    break;
+                case 'ln':
+                    if (value <= 0) throw new Error('Invalid input for natural log');
+                    result = Math.log(value);
+                    break;
+                case '√':
+                    if (value < 0) throw new Error('Invalid input for square root');
+                    result = Math.sqrt(value);
+                    break;
+                case 'n!':
+                    if (value < 0 || !Number.isInteger(value)) throw new Error('Invalid input for factorial');
+                    if (value > 170) throw new Error('Factorial too large');
+                    result = this.factorial(value);
+                    break;
+                case '1/x':
+                    if (value === 0) throw new Error('Division by zero');
+                    result = 1 / value;
+                    break;
+                case '|x|':
+                    result = Math.abs(value);
+                    break;
+                case 'e^x':
+                    result = Math.exp(value);
+                    break;
+                case '10^x':
+                    result = Math.pow(10, value);
+                    break;
+                default:
+                    throw new Error('Invalid operation');
+            }
 
-        this.currentValue = this.formatResult(result);
-        this.updateDisplay();
-        this.addToHistory(`${func}(${value}) = ${this.currentValue}`);
+            this.currentValue = this.formatResult(result);
+            this.updateDisplay();
+            this.addToHistory(`${func}(${value}) = ${this.currentValue}`);
+        });
     }
 
     handleProgrammer(func) {
@@ -279,8 +307,13 @@ class Calculator {
     }
 
     storeMemory() {
-        this.memory.push(this.currentValue);
-        this.updateMemoryPanel();
+        this.safeOperation(() => {
+            if (this.memory.length >= this.MAX_MEMORY_SLOTS) {
+                throw new Error('Memory slots full');
+            }
+            this.memory.push(this.currentValue);
+            this.updateMemoryPanel();
+        });
     }
 
     recallMemory() {
@@ -328,13 +361,13 @@ class Calculator {
     }
 
     calculate() {
-        if (this.previousValue === null) return;
+        this.safeOperation(() => {
+            if (this.previousValue === null) return;
 
-        const prev = parseFloat(this.previousValue);
-        const current = parseFloat(this.currentValue);
-        let result;
+            const prev = parseFloat(this.previousValue);
+            const current = parseFloat(this.currentValue);
+            let result;
 
-        try {
             switch (this.operation) {
                 case '+': result = prev + current; break;
                 case '-': result = prev - current; break;
@@ -343,12 +376,21 @@ class Calculator {
                     if (current === 0) throw new Error('Division by zero');
                     result = prev / current; 
                     break;
-                case '^': result = Math.pow(prev, current); break;
+                case '^': 
+                    if (prev === 0 && current < 0) throw new Error('Invalid power operation');
+                    result = Math.pow(prev, current); 
+                    break;
                 case '&': result = prev & current; break;
                 case '|': result = prev | current; break;
-                case '<<': result = prev << current; break;
-                case '>>': result = prev >> current; break;
-                default: return;
+                case '<<': 
+                    if (!Number.isInteger(current)) throw new Error('Invalid shift amount');
+                    result = prev << current; 
+                    break;
+                case '>>': 
+                    if (!Number.isInteger(current)) throw new Error('Invalid shift amount');
+                    result = prev >> current; 
+                    break;
+                default: throw new Error('Invalid operation');
             }
 
             this.currentValue = this.formatResult(result);
@@ -356,10 +398,7 @@ class Calculator {
             this.previousValue = null;
             this.operation = null;
             this.updateDisplay();
-        } catch (error) {
-            this.display.textContent = 'Error';
-            this.clear();
-        }
+        });
     }
 
     formatResult(result) {
@@ -385,30 +424,89 @@ class Calculator {
 
     updateDisplay() {
         this.display.textContent = this.currentValue;
+        this.display.setAttribute('aria-label', `Display: ${this.currentValue}`);
     }
 
     handleKeyboardInput(e) {
-        if (e.key >= '0' && e.key <= '9') {
-            this.handleNumber(e.key);
-        } else if (['+', '-', '*', '/', '^', '&', '|'].includes(e.key)) {
-            this.handleOperator(e.key === '*' ? '×' : e.key === '/' ? '÷' : e.key);
-        } else if (e.key === 'Enter' || e.key === '=') {
-            this.calculate();
-        } else if (e.key === 'Escape') {
-            this.clear();
-        } else if (e.key === '.') {
-            this.handleDecimal();
+        const key = e.key;
+        const buttonText = this.keyboardMap.get(key);
+        
+        if (buttonText) {
+            e.preventDefault();
+            const button = Array.from(document.querySelectorAll('button'))
+                .find(btn => btn.textContent === buttonText);
+            
+            if (button) {
+                button.focus();
+                button.click();
+            }
+        }
+
+        // Handle special cases
+        switch (key) {
+            case 'ArrowUp':
+                this.navigateHistory(-1);
+                break;
+            case 'ArrowDown':
+                this.navigateHistory(1);
+                break;
+            case 'ArrowLeft':
+                this.navigateMemory(-1);
+                break;
+            case 'ArrowRight':
+                this.navigateMemory(1);
+                break;
+            case 'm':
+                if (e.ctrlKey) {
+                    this.toggleMemoryPanel();
+                }
+                break;
+            case 'h':
+                if (e.ctrlKey) {
+                    this.toggleHistoryPanel();
+                }
+                break;
         }
     }
 
-    handleNumber(number) {
-        if (this.shouldResetDisplay) {
-            this.currentValue = number;
-            this.shouldResetDisplay = false;
-        } else {
-            this.currentValue = this.currentValue === '0' ? number : this.currentValue + number;
-        }
+    navigateHistory(direction) {
+        if (this.history.length === 0) return;
+        
+        const currentIndex = this.history.indexOf(this.currentValue);
+        let newIndex = currentIndex + direction;
+        
+        if (newIndex < 0) newIndex = this.history.length - 1;
+        if (newIndex >= this.history.length) newIndex = 0;
+        
+        this.currentValue = this.history[newIndex];
         this.updateDisplay();
+    }
+
+    navigateMemory(direction) {
+        if (this.memory.length === 0) return;
+        
+        const currentIndex = this.memory.indexOf(this.currentValue);
+        let newIndex = currentIndex + direction;
+        
+        if (newIndex < 0) newIndex = this.memory.length - 1;
+        if (newIndex >= this.memory.length) newIndex = 0;
+        
+        this.currentValue = this.memory[newIndex];
+        this.updateDisplay();
+    }
+
+    handleNumber(number) {
+        this.safeOperation(() => {
+            if (this.shouldResetDisplay) {
+                this.currentValue = number;
+                this.shouldResetDisplay = false;
+            } else {
+                const newValue = this.currentValue === '0' ? number : this.currentValue + number;
+                this.validateInput(newValue);
+                this.currentValue = newValue;
+            }
+            this.updateDisplay();
+        });
     }
 
     handleOperator(op) {
@@ -421,21 +519,50 @@ class Calculator {
     }
 
     handleDecimal() {
-        if (this.shouldResetDisplay) {
-            this.currentValue = '0.';
-            this.shouldResetDisplay = false;
-        } else if (!this.currentValue.includes('.')) {
-            this.currentValue += '.';
-        }
-        this.updateDisplay();
+        this.safeOperation(() => {
+            if (this.shouldResetDisplay) {
+                this.currentValue = '0.';
+                this.shouldResetDisplay = false;
+            } else if (!this.currentValue.includes('.')) {
+                const newValue = this.currentValue + '.';
+                this.validateInput(newValue);
+                this.currentValue = newValue;
+            }
+            this.updateDisplay();
+        });
     }
 
     updateModeDisplay() {
-        // Update display based on current mode
-        const modeDisplay = document.querySelector('.mode-display');
-        if (modeDisplay) {
-            modeDisplay.textContent = this.currentMode.toUpperCase();
+        this.modeDisplay.textContent = this.currentMode.toUpperCase();
+        this.modeDisplay.setAttribute('aria-label', `Current mode: ${this.currentMode}`);
+    }
+
+    // Add input validation
+    validateInput(value) {
+        if (value.length > this.MAX_INPUT_LENGTH) {
+            throw new Error('Input too long');
         }
+        if (isNaN(parseFloat(value))) {
+            throw new Error('Invalid number');
+        }
+        return true;
+    }
+
+    // Add error handling wrapper
+    safeOperation(operation) {
+        try {
+            return operation();
+        } catch (error) {
+            this.displayError(error.message);
+            return null;
+        }
+    }
+
+    displayError(message) {
+        this.display.textContent = `Error: ${message}`;
+        setTimeout(() => {
+            this.clear();
+        }, 2000);
     }
 }
 
