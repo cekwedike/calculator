@@ -400,6 +400,43 @@ class Calculator {
             this.handleDecimal();
         }
     }
+
+    handleNumber(number) {
+        if (this.shouldResetDisplay) {
+            this.currentValue = number;
+            this.shouldResetDisplay = false;
+        } else {
+            this.currentValue = this.currentValue === '0' ? number : this.currentValue + number;
+        }
+        this.updateDisplay();
+    }
+
+    handleOperator(op) {
+        if (this.previousValue !== null) {
+            this.calculate();
+        }
+        this.operation = op;
+        this.previousValue = this.currentValue;
+        this.shouldResetDisplay = true;
+    }
+
+    handleDecimal() {
+        if (this.shouldResetDisplay) {
+            this.currentValue = '0.';
+            this.shouldResetDisplay = false;
+        } else if (!this.currentValue.includes('.')) {
+            this.currentValue += '.';
+        }
+        this.updateDisplay();
+    }
+
+    updateModeDisplay() {
+        // Update display based on current mode
+        const modeDisplay = document.querySelector('.mode-display');
+        if (modeDisplay) {
+            modeDisplay.textContent = this.currentMode.toUpperCase();
+        }
+    }
 }
 
 // Initialize the calculator when the DOM is loaded
