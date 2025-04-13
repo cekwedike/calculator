@@ -1,6 +1,6 @@
 # Advanced Scientific Calculator
 
-A feature-rich, multi-mode scientific calculator built with HTML, CSS, and JavaScript. This calculator provides a comprehensive set of mathematical, statistical, and programming functions in a modern, responsive interface.
+A feature-rich, multi-mode scientific calculator built with HTML, CSS, and JavaScript. This calculator provides a comprehensive set of mathematical, statistical, and programming functions in a modern, responsive interface. This project is part of my self-improvement journey to enhance my web development skills.
 
 ## Features
 
@@ -129,7 +129,7 @@ calculator/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/advanced-calculator.git
+git clone https://github.com/cekwedike/advanced-calculator.git
 ```
 
 2. Open the project directory:
@@ -169,6 +169,10 @@ For support, please open an issue in the GitHub repository or contact the mainta
 
 ## Author
 
-[Your Name]
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com 
+Chidiebere Ekwedike
+- GitHub: [@cekwedike](https://github.com/cekwedike)
+- Email: c.ekwedike@alustudent.com
+
+## About This Project
+
+This project is part of my self-improvement journey to enhance my web development skills. It serves as a practical application of HTML, CSS, and JavaScript concepts while building a useful tool. The calculator demonstrates my ability to create complex, interactive web applications with modern features and responsive design. 
