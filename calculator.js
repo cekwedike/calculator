@@ -15,6 +15,7 @@ class Calculator {
         this.MAX_INPUT_LENGTH = 15;
         this.MAX_MEMORY_SLOTS = 10;
         this.focusedButton = null;
+        this.isDarkMode = localStorage.getItem('darkMode') === 'true';
         this.keyboardMap = new Map([
             ['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'],
             ['5', '5'], ['6', '6'], ['7', '7'], ['8', '8'], ['9', '9'],
@@ -107,6 +108,15 @@ class Calculator {
                 }
             }
         });
+
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+        this.applyTheme();
+
+        // Add copy to clipboard functionality
+        this.display.addEventListener('click', () => this.copyToClipboard());
+        this.display.setAttribute('title', 'Click to copy to clipboard');
+        this.display.style.cursor = 'pointer';
     }
 
     setMode(mode) {
@@ -563,6 +573,32 @@ class Calculator {
         setTimeout(() => {
             this.clear();
         }, 2000);
+    }
+
+    toggleTheme() {
+        this.isDarkMode = !this.isDarkMode;
+        localStorage.setItem('darkMode', this.isDarkMode);
+        this.applyTheme();
+    }
+
+    applyTheme() {
+        document.body.classList.toggle('dark-mode', this.isDarkMode);
+        document.getElementById('themeToggle').textContent = this.isDarkMode ? '🌙' : '☀️';
+    }
+
+    copyToClipboard() {
+        navigator.clipboard.writeText(this.currentValue)
+            .then(() => {
+                const originalText = this.display.textContent;
+                this.display.textContent = 'Copied!';
+                setTimeout(() => {
+                    this.display.textContent = originalText;
+                }, 1000);
+            })
+            .catch(err => {
+                console.error('Failed to copy text: ', err);
+                this.displayError('Failed to copy to clipboard');
+            });
     }
 }
 

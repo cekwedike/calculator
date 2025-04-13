@@ -241,4 +241,129 @@ button:active {
     .mode-selector, .settings {
         flex-wrap: wrap;
     }
+}
+
+@media (max-width: 768px) {
+    .calculator {
+        width: 95%;
+        max-width: 400px;
+        padding: 10px;
+    }
+
+    .buttons {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+    }
+
+    button {
+        padding: 15px;
+        font-size: 1.2rem;
+    }
+
+    .mode-selector {
+        flex-wrap: wrap;
+    }
+
+    .mode-btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .settings {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .settings-btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .display {
+        font-size: 2rem;
+        padding: 15px;
+    }
+
+    .history-panel,
+    .memory-panel {
+        width: 90%;
+        max-width: 350px;
+    }
+}
+
+@media (max-width: 480px) {
+    .buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    button {
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    .display {
+        font-size: 1.8rem;
+        padding: 12px;
+    }
+
+    .mode-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .settings-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+body.dark-mode .calculator {
+    background-color: #2d2d2d;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .display-container {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+body.dark-mode .display {
+    color: #ffffff;
+}
+
+body.dark-mode button {
+    background-color: #3d3d3d;
+    color: #ffffff;
+    border: 1px solid #4d4d4d;
+}
+
+body.dark-mode button:hover {
+    background-color: #4d4d4d;
+}
+
+body.dark-mode .mode-btn.active {
+    background-color: #4d4d4d;
+    color: #ffffff;
+}
+
+body.dark-mode .settings-btn {
+    background-color: #3d3d3d;
+    color: #ffffff;
+}
+
+body.dark-mode .history-panel,
+body.dark-mode .memory-panel {
+    background-color: #2d2d2d;
+    border: 1px solid #4d4d4d;
+}
+
+body.dark-mode .history-item,
+body.dark-mode .memory-item {
+    border-bottom: 1px solid #4d4d4d;
 } 
