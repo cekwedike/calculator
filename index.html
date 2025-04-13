@@ -3,17 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scientific Calculator</title>
+    <title>Advanced Scientific Calculator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="calculator">
-        <div class="display">0</div>
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="standard">Standard</button>
+            <button class="mode-btn" data-mode="scientific">Scientific</button>
+            <button class="mode-btn" data-mode="programmer">Programmer</button>
+            <button class="mode-btn" data-mode="statistics">Statistics</button>
+        </div>
+        
+        <div class="settings">
+            <button class="settings-btn" id="angleMode">DEG</button>
+            <button class="settings-btn" id="historyBtn">History</button>
+            <button class="settings-btn" id="memoryBtn">Memory</button>
+        </div>
+
+        <div class="display-container">
+            <div class="history-display"></div>
+            <div class="display">0</div>
+        </div>
+
         <div class="buttons">
             <!-- Scientific Functions -->
             <button class="scientific">sin</button>
             <button class="scientific">cos</button>
             <button class="scientific">tan</button>
+            <button class="scientific">sin⁻¹</button>
+            <button class="scientific">cos⁻¹</button>
+            <button class="scientific">tan⁻¹</button>
             <button class="scientific">log</button>
             <button class="scientific">ln</button>
             <button class="scientific">√</button>
@@ -23,6 +43,33 @@
             <button class="scientific">e</button>
             <button class="scientific">(</button>
             <button class="scientific">)</button>
+            <button class="scientific">n!</button>
+            <button class="scientific">1/x</button>
+            <button class="scientific">|x|</button>
+            <button class="scientific">e^x</button>
+            <button class="scientific">10^x</button>
+            
+            <!-- Programmer Functions -->
+            <button class="programmer hidden">HEX</button>
+            <button class="programmer hidden">DEC</button>
+            <button class="programmer hidden">OCT</button>
+            <button class="programmer hidden">BIN</button>
+            <button class="programmer hidden">AND</button>
+            <button class="programmer hidden">OR</button>
+            <button class="programmer hidden">XOR</button>
+            <button class="programmer hidden">NOT</button>
+            <button class="programmer hidden"><<</button>
+            <button class="programmer hidden">>></button>
+            
+            <!-- Statistics Functions -->
+            <button class="statistics hidden">DATA</button>
+            <button class="statistics hidden">MEAN</button>
+            <button class="statistics hidden">MED</button>
+            <button class="statistics hidden">STD</button>
+            <button class="statistics hidden">VAR</button>
+            <button class="statistics hidden">MIN</button>
+            <button class="statistics hidden">MAX</button>
+            <button class="statistics hidden">SUM</button>
             
             <!-- Standard Calculator Buttons -->
             <button class="clear">C</button>
@@ -42,6 +89,20 @@
             <button class="number">0</button>
             <button class="decimal">.</button>
             <button class="equals">=</button>
+        </div>
+
+        <!-- History Panel -->
+        <div class="history-panel hidden">
+            <div class="history-content"></div>
+            <button class="clear-history">Clear History</button>
+        </div>
+
+        <!-- Memory Panel -->
+        <div class="memory-panel hidden">
+            <div class="memory-content"></div>
+            <button class="memory-store">Store</button>
+            <button class="memory-recall">Recall</button>
+            <button class="memory-clear">Clear</button>
         </div>
     </div>
     <script src="calculator.js"></script>
